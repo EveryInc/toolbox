@@ -47,7 +47,7 @@ tools:
   # Coding
   - { slug: cursor, name: Cursor, maker: Anysphere, mark: cursor, hue: 220, monogram: Cu, categories: [coding], models: [composer, *frontier, kimi, kimi-code] }
   - { slug: claude-code, name: Claude Code, maker: Anthropic, mark: claudecode, hue: 18, monogram: CC, categories: [coding, knowledge-work], models: [*anthropic] }
-  - { slug: codex, name: Codex, maker: OpenAI, mark: openai, hue: 160, monogram: Cx, categories: [coding], models: [*openai, gpt-oss] }
+  - { slug: codex, name: Codex, maker: OpenAI, mark: openai, hue: 160, monogram: Cx, categories: [coding, personal-agents], models: [*openai, gpt-oss] }
   - { slug: github-copilot, name: GitHub Copilot, maker: GitHub, hue: 265, monogram: GH, categories: [coding], models: [*frontier] }
   - { slug: windsurf, name: Windsurf, maker: Cognition, hue: 175, monogram: Ws, categories: [coding], models: [*frontier, kimi, glm] }
   - { slug: zed, name: Zed, maker: Zed Industries, hue: 210, monogram: Ze, categories: [coding], models: [*frontier, *open_weights] }
@@ -84,6 +84,8 @@ tools:
   - { slug: alexa-plus, name: Alexa+, maker: Amazon, hue: 195, monogram: A+, categories: [personal-agents] }
   - { slug: openclaw, name: OpenClaw, maker: OpenClaw, hue: 5, monogram: Cw, categories: [personal-agents], models: [*frontier, *open_weights] }
   - { slug: hermes-agent, name: Hermes Agent, maker: Nous Research, hue: 40, monogram: HA, categories: [personal-agents], models: [*frontier, *open_weights] }
+  # Not launched yet: rename here (the slug stays) once it is public.
+  - { slug: unannounced-agent, name: Unknown, hue: 220, monogram: "?", categories: [personal-agents] }
   # Classification and APIs
   - { slug: typesafe-jev, name: TypeSafe Jev, maker: TypeSafe, hue: 255, monogram: Jv, categories: [classification], models: [jev] }
   - { slug: openai-api, name: OpenAI API, maker: OpenAI, mark: openai, hue: 160, monogram: OA, categories: [classification], models: [*openai, gpt-image, sora, gpt-tts, gpt-live, gpt-realtime, gpt-realtime-translate, gpt-transcribe, whisper] }
