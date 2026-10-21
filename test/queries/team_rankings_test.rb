@@ -238,11 +238,11 @@ class TeamRankingsTest < ActiveSupport::TestCase
     assert_operator coding[:setups].sum { |setup| setup[:count][:n] }, :>, 2, "two people, more setups: people appear in several"
   end
 
-  test "takes: the Vibe Check links of launched models people ranked in the kind" do
-    expected = [ { model: item(ai_models(:opus_5_5)), url: ai_models(:opus_5_5).vibe_check_url } ]
+  test "takes: the Vibe Check links of launched models people ranked in the kind, tagged for Toolbox" do
+    take = ->(slug) { { tag: "vibe_check", title: "Claude Opus 5.5", item: item(ai_models(:opus_5_5)), url: "#{ai_models(:opus_5_5).vibe_check_url}?utm_source=toolbox&utm_medium=referral&utm_campaign=#{slug}" } }
 
-    assert_equal expected, @team.kind(categories(:coding))[:takes]
-    assert_equal expected, @team.kind(categories(:knowledge_work))[:takes]
+    assert_equal [ take.("coding") ], @team.kind(categories(:coding))[:takes]
+    assert_equal [ take.("knowledge-work") ], @team.kind(categories(:knowledge_work))[:takes]
     assert_empty @team.kind(categories(:video))[:takes]
 
     entries(:ana_claude).update!(ai_model: nil)
@@ -251,10 +251,32 @@ class TeamRankingsTest < ActiveSupport::TestCase
 
   test "takes: only a launched model, never one without a date or with a link that fails the allowlist" do
     ai_models(:gpt_6).update!(vibe_check_url: "https://checks.every.to/vibe-checks/gpt-6")
-    assert_equal %w[claude-opus-5-5], @team.kind(categories(:coding))[:takes].map { |take| take[:model][:slug] }, "a link without a date is not a launch"
+    assert_equal %w[claude-opus-5-5], @team.kind(categories(:coding))[:takes].map { |take| take[:item][:slug] }, "a link without a date is not a launch"
 
     ai_models(:opus_5_5).update_column(:vibe_check_url, "http://evil.example/steal")
     assert_empty TeamRankings.new(viewer: @dee).kind(categories(:coding))[:takes], "a raw value past validation never becomes a link"
+  end
+
+  test "takes: the kind's Every articles come first, with their tool's tile, and an article on another kind or off Every is not shown" do
+    Tempfile.create([ "catalog", ".yml" ]) do |file|
+      file.write({ "articles" => [
+        { "title" => "How Every codes", "url" => "https://every.to/p/how-every-codes?ref=x&utm_source=old", "kinds" => %w[coding], "tool" => tools(:cursor).slug },
+        { "title" => "No tile", "url" => "https://every.to/p/no-tile", "kinds" => %w[coding research] },
+        { "title" => "Elsewhere", "url" => "https://every.to/p/video", "kinds" => %w[video] },
+        { "title" => "Off Every", "url" => "https://evil.example/p", "kinds" => %w[coding] }
+      ] }.to_yaml)
+      file.flush
+      Article.path = file.path
+
+      takes = @team.kind(categories(:coding))[:takes]
+      assert_equal [
+        { tag: "article", title: "How Every codes", item: item(tools(:cursor)), url: "https://every.to/p/how-every-codes?ref=x&utm_source=toolbox&utm_medium=referral&utm_campaign=coding" },
+        { tag: "article", title: "No tile", item: nil, url: "https://every.to/p/no-tile?utm_source=toolbox&utm_medium=referral&utm_campaign=coding" }
+      ], takes.first(2)
+      assert_equal %w[article article vibe_check], takes.pluck(:tag)
+    ensure
+      Article.path = nil
+    end
   end
 
   # Hidden people, the owner, pending items
@@ -524,7 +546,7 @@ class TeamRankingsTest < ActiveSupport::TestCase
     assert_equal [ 1, 2, 3 ], kind[:tools].first[:by_rank].keys
     assert_equal %i[handle name], kind[:tools].first[:by_rank][1].first.keys
     assert_equal %i[tool model context effort count], kind[:setups].first.keys
-    assert_equal %i[model url], kind[:takes].first.keys
+    assert_equal %i[tag title item url], kind[:takes].first.keys
     assert_equal %i[tools models], @team.team_top["coding"].keys
     assert_equal %i[item count yours_rank], @team.team_top["coding"][:tools].first.keys
     assert_equal %i[item count yours_rank launched], @team.team_top["coding"][:models].first.keys

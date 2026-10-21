@@ -28,4 +28,63 @@ namespace :toolbox do
     end
     puts "Revoked #{grants} #{"grant".pluralize(grants)} and withdrew #{withdrawn} open #{"suggestion".pluralize(withdrawn)}."
   end
+  desc "Add the Every team's personal-agent survey picks. Creates missing members, onboarded with a public page, whom their first Every sign-in adopts by email; leaves anyone who already has personal-agent picks alone"
+  task import_personal_agents: :environment do
+    # Personal agents the Every team named in the October 2026 survey, best first, by
+    # catalog slug. Loop is unannounced-agent until it launches; a tie keeps the order
+    # given. Mike Taylor uses none, and a self-built orchestrator is not in the catalog.
+    survey = {
+      "brandon@every.to" => [ "Brandon Gell", %w[instinct dots] ],
+      "arielle@every.to" => [ "Arielle Shipper", %w[codex dots] ],
+      "kate@every.to" => [ "Kate Lee", %w[dots] ],
+      "dan@every.to" => [ "Dan Shipper", %w[dots unannounced-agent] ],
+      "natalia@every.to" => [ "Natalia Quintero", %w[dots] ],
+      "mike@every.to" => [ "Mike Taylor", [] ],
+      "kaushik.viswanath@every.to" => [ "Kaushik Viswanath", %w[dots instinct] ],
+      "loren.stewart@every.to" => [ "Loren Stewart", %w[dots] ],
+      "lee@every.to" => [ "Lee Knowlton", %w[dots grok-bot] ],
+      "jannik@every.to" => [ "Jannik Jung", %w[poke instinct dots] ],
+      "andrey@every.to" => [ "Andrey Galko", %w[poke] ],
+      "micah.rich@every.to" => [ "Micah Rich", %w[instinct poke grok-bot] ],
+      "becky@every.to" => [ "Becky Isjwara", %w[dots] ],
+      "daniel@every.to" => [ "Daniel Rodrigues", %w[dots] ],
+      "laura@every.to" => [ "Laura Entis", %w[dots] ],
+      "katie@every.to" => [ "Katie Parrott", %w[dots] ],
+      "randy.counsman@every.to" => [ "Randy Counsman", %w[dots instinct] ],
+      "ryan@every.to" => [ "Ryan Wright", %w[dots unannounced-agent grok-bot] ],
+      "tyler.nishida@every.to" => [ "Tyler Nishida", %w[grok-bot unannounced-agent] ],
+      "brian@every.to" => [ "Brian Dell", %w[dots instinct] ],
+      "diana@every.to" => [ "Diana Palacio", %w[codex grok-bot] ],
+      "waqqas@every.to" => [ "Waqqas Mir", %w[grok-bot] ]
+    }
+
+    survey.each do |email, (name, tools)|
+      user = User.find_or_initialize_by(email_address: email)
+      if user.new_record?
+        user.update!(name:, email_verified: true, handle: User.suggest_handle(from: email), onboarded_at: Time.current, visibility: "link")
+      end
+
+      category = Category.find_by!(slug: "personal-agents")
+      if user.entries.where(category:).exists?
+        puts "Skipped #{email}: already has personal-agent picks"
+        next
+      end
+      next puts("Added #{email} with no picks") if tools.empty?
+
+      operations = tools.each_with_index.map { |tool, index| { op: "set_pick", category: category.slug, rank: index + 1, tool: } }
+      Toolbox::Update.call(user:, operations:, source: "web")
+      puts "Added #{email}: #{tools.join(", ")}"
+    end
+  end
+  desc "On Claude Duet's launch day, after the deploy that names it: give the Duet picks without a model Claude Opus 5.5, which it is built around"
+  task launch_duet: :environment do
+    duet = Tool.find_by!(slug: "unannounced-agent")
+    abort "Deploy the catalog that names Claude Duet first (it is still #{duet.name.inspect})." unless duet.name == "Claude Duet"
+
+    duet.entries.where(ai_model_id: nil).includes(:user, :category).find_each do |entry|
+      Toolbox::Update.call(user: entry.user, source: "web",
+        operations: [ { op: "set_pick", category: entry.category.slug, rank: entry.rank, model: "claude-opus-5-5", expected_tool: duet.slug } ])
+      puts "#{entry.user.email_address}: Claude Duet at ##{entry.rank} now runs Claude Opus 5.5"
+    end
+  end
 end

@@ -122,12 +122,18 @@ describe('Kind page', () => {
     expect(screen.getByText('Nobody has picked a model yet')).toBeInTheDocument()
   })
 
-  it('shows takes as sign-in-gated Vibe Check link-outs, with no quotes', () => {
+  it('shows articles and sign-in-gated Vibe Checks as tagged link-outs, with no quotes', () => {
     render(<KindPage {...props()} />)
 
-    const section = screen.getByRole('region', { name: 'Takes on these models' })
+    const section = screen.getByRole('region', { name: 'Read on Every' })
+    const article = within(section).getByRole('link', { name: 'Read How Every codes with agents on Every' })
+    expect(article).toHaveAttribute('href', 'https://every.to/p/how-every-codes?utm_source=toolbox&utm_medium=referral&utm_campaign=coding')
+    expect(article).toHaveAttribute('target', '_blank')
+    expect(article).toHaveAttribute('rel', 'noopener noreferrer')
+    expect(section).toHaveTextContent('Article')
+
     const link = within(section).getByRole('link', { name: 'Vibe Check for Claude Opus 5.5' })
-    expect(link).toHaveAttribute('href', 'https://checks.every.to/vibe-checks/claude-opus-5-5')
+    expect(link).toHaveAttribute('href', 'https://checks.every.to/vibe-checks/claude-opus-5-5?utm_source=toolbox&utm_medium=referral&utm_campaign=coding')
     expect(link).toHaveAttribute('target', '_blank')
     expect(link).toHaveAttribute('rel', 'noopener noreferrer')
     expect(link).toHaveTextContent(/^Vibe Check/)
@@ -138,7 +144,7 @@ describe('Kind page', () => {
   it('hides the takes section when there are none', () => {
     render(<KindPage {...props({ takes: [] })} />)
 
-    expect(screen.queryByRole('region', { name: 'Takes on these models' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Read on Every' })).not.toBeInTheDocument()
     expect(screen.queryByText(/Vibe Check/)).not.toBeInTheDocument()
   })
 

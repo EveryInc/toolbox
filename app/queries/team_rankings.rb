@@ -32,7 +32,8 @@
 #                  names only people the viewer may open; unnamed is how many other counted people
 #                  have the item, never split by rank ("and 2 others").
 #                  setups = [{ tool:, model:, context:, effort:, count: }], picks with a model only
-#                  takes  = [{ model:, url: }], Vibe Check links of launched models ranked in the kind
+#                  takes  = [{ tag:, title:, item:, url: }], tag article or vibe_check: the kind's Every
+#                  articles (Article) and the Vibe Checks of launched models ranked in it; item may be nil
 #   team_top       the editor's team list: { "<kind slug>" => { tools: [{ item:, count:, yours_rank: }],
 #                  models: [{ item:, count:, yours_rank:, launched: }] } }, five each, yours_rank is the viewer's own
 #   item_counts(category: nil)   { tools: { id => Count }, models: { id => Count } } in ranking order
@@ -102,7 +103,7 @@ class TeamRankings
       tools: ranked_items(category, :tool).map { |tally| listing(tally, entries, :tool) },
       models: models.map { |tally| listing(tally, entries, :model) },
       setups: setups(entries),
-      takes: takes(models),
+      takes: takes(category, models),
       last_update_at: last_updates[category.id]&.iso8601
     }
   end
@@ -232,10 +233,20 @@ class TeamRankings
     end
   end
 
-  # Link-outs only: the Vibe Check of every launched model someone ranked in the kind.
-  def takes(model_tallies)
+  # Link-outs only, each tagged with Toolbox's UTM: the kind's articles, then the Vibe Check of
+  # every launched model someone ranked in it.
+  def takes(category, model_tallies)
+    articles = Article.about(category)
+    tools = Tool.where(slug: articles.filter_map(&:tool)).where.not(status: "pending").index_by(&:slug)
     ranked_ids = model_tallies.map { |tally| tally.item.id }
-    ModelLaunches.models.select { |model| ranked_ids.include?(model.id) }.map { |model| { model: model.to_prop, url: model.vibe_check_link } }
+    launches = ModelLaunches.models.select { |model| ranked_ids.include?(model.id) }
+
+    articles.map { |article| take("article", article.title, tools[article.tool], article.link, category) } +
+      launches.map { |model| take("vibe_check", model.name, model, model.vibe_check_link, category) }
+  end
+
+  def take(tag, title, item, url, category)
+    { tag:, title:, item: item&.to_prop, url: EveryLink.tag(url, campaign: category.slug) }
   end
 
   # The team's top tools in a kind, each with the model most people pair with it there.
