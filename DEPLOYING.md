@@ -226,8 +226,8 @@ Four rake tasks run in the container (`bin/kamal app exec --reuse "..."`):
   as picks. A missing member is created onboarded with a public page (as a new member starts), and their
   first Every sign-in adopts the row by email; anyone who already has personal-agent picks is
   left alone, so it is safe to run again.
-- `bin/rails toolbox:launch_loop` runs once, after the deploy that names Loop: it gives every
-  Loop pick without a model Claude Opus 5.5. Before that deploy it refuses, so the model cannot
+- `bin/rails toolbox:launch_duet` runs once, after the deploy that names Claude Duet: it gives
+  every Duet pick without a model Claude Opus 5.5. Before that deploy it refuses, so the model cannot
   reveal the agent while it is still listed as Unknown.
 
 ## Caveat: git worktrees do not inherit your shell secrets
