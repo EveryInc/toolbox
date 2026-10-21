@@ -84,8 +84,8 @@ tools:
   - { slug: alexa-plus, name: Alexa+, maker: Amazon, hue: 195, monogram: A+, categories: [personal-agents] }
   - { slug: openclaw, name: OpenClaw, maker: OpenClaw, hue: 5, monogram: Cw, categories: [personal-agents], models: [*frontier, *open_weights] }
   - { slug: hermes-agent, name: Hermes Agent, maker: Nous Research, hue: 40, monogram: HA, categories: [personal-agents], models: [*frontier, *open_weights] }
-  # Not launched yet: rename here (the slug stays) once it is public.
-  - { slug: unannounced-agent, name: Unknown, hue: 220, monogram: "?", categories: [personal-agents] }
+  # The slug predates the launch (it was listed as Unknown); it stays so picks survive.
+  - { slug: unannounced-agent, name: Loop, maker: Anthropic, mark: claude, hue: 18, monogram: Lp, categories: [personal-agents], models: [claude-opus-5-5, *anthropic] }
   # Classification and APIs
   - { slug: typesafe-jev, name: TypeSafe Jev, maker: TypeSafe, hue: 255, monogram: Jv, categories: [classification], models: [jev] }
   - { slug: openai-api, name: OpenAI API, maker: OpenAI, mark: openai, hue: 160, monogram: OA, categories: [classification], models: [*openai, gpt-image, sora, gpt-tts, gpt-live, gpt-realtime, gpt-realtime-translate, gpt-transcribe, whisper] }
