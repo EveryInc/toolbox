@@ -54,7 +54,8 @@ namespace :toolbox do
       "ryan@every.to" => [ "Ryan Wright", %w[dots unannounced-agent grok-bot] ],
       "tyler.nishida@every.to" => [ "Tyler Nishida", %w[grok-bot unannounced-agent] ],
       "brian@every.to" => [ "Brian Dell", %w[dots instinct] ],
-      "diana@every.to" => [ "Diana Palacio", %w[codex grok-bot] ]
+      "diana@every.to" => [ "Diana Palacio", %w[codex grok-bot] ],
+      "waqqas@every.to" => [ "Waqqas Mir", %w[grok-bot] ]
     }
 
     survey.each do |email, (name, tools)|
