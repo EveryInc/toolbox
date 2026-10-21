@@ -28,7 +28,7 @@ namespace :toolbox do
     end
     puts "Revoked #{grants} #{"grant".pluralize(grants)} and withdrew #{withdrawn} open #{"suggestion".pluralize(withdrawn)}."
   end
-  desc "Add the Every team's personal-agent survey picks. Creates missing members, onboarded and private (counted, not named), whom their first Every sign-in adopts by email; leaves anyone who already has personal-agent picks alone"
+  desc "Add the Every team's personal-agent survey picks. Creates missing members, onboarded with a public page, whom their first Every sign-in adopts by email; leaves anyone who already has personal-agent picks alone"
   task import_personal_agents: :environment do
     # Personal agents the Every team named in the October 2026 survey, best first, by
     # catalog slug. Loop is unannounced-agent until it launches; a tie keeps the order
@@ -60,7 +60,7 @@ namespace :toolbox do
     survey.each do |email, (name, tools)|
       user = User.find_or_initialize_by(email_address: email)
       if user.new_record?
-        user.update!(name:, email_verified: true, handle: User.suggest_handle(from: email), onboarded_at: Time.current)
+        user.update!(name:, email_verified: true, handle: User.suggest_handle(from: email), onboarded_at: Time.current, visibility: "link")
       end
 
       category = Category.find_by!(slug: "personal-agents")

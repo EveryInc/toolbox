@@ -223,7 +223,7 @@ Three rake tasks run in the container (`bin/kamal app exec --reuse "..."`):
   suggestions agents left open, so members approve their agents again. Use it if agents connected
   before this release: there is one `toolbox` scope, and reads now include teammates' data.
 - `bin/rails toolbox:import_personal_agents` adds the team's October 2026 personal-agent survey
-  as picks. A missing member is created onboarded and private (counted, never named) and their
+  as picks. A missing member is created onboarded with a public page (as a new member starts), and their
   first Every sign-in adopts the row by email; anyone who already has personal-agent picks is
   left alone, so it is safe to run again.
 
