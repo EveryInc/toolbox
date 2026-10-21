@@ -52,7 +52,7 @@ class GetTeamRankingsToolTest < ActiveSupport::TestCase
       [ "cursor", "claude-opus-5-5", "1m", "high", 1 ],
       [ "cursor", "gpt-6-astra", nil, nil, 1 ]
     ], setups.sort_by(&:to_s)
-    assert_equal [ [ "claude-opus-5-5", "https://checks.every.to/vibe-checks/claude-opus-5-5" ] ], body["takes"].map { |take| [ take.dig("model", "slug"), take["vibe_check_url"] ] }
+    assert_equal [ [ "vibe_check", "claude-opus-5-5", "https://checks.every.to/vibe-checks/claude-opus-5-5?utm_source=toolbox&utm_medium=referral&utm_campaign=coding" ] ], body["takes"].map { |take| [ take["tag"], take.dig("item", "slug"), take["url"] ] }
   end
 
   test "the audience argument switches to everyone else, where only people who share with the viewer count" do

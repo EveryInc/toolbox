@@ -141,8 +141,8 @@ export default function KindPage({ filters, notice, category, ranked, tools, mod
           </Section>
 
           {takes.length > 0 && (
-            <Section id="takes" title="Takes on these models">
-              <p className="mt-4 max-w-[660px] text-caption text-fg-soft">Every's Vibe Checks of the models people ranked here.</p>
+            <Section id="takes" title="Read on Every">
+              <p className="mt-4 max-w-[660px] text-caption text-fg-soft">Every's articles on {name}, and its Vibe Checks of the models people ranked here.</p>
               <Takes takes={takes} />
             </Section>
           )}
