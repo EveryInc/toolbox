@@ -76,4 +76,15 @@ namespace :toolbox do
       puts "Added #{email}: #{tools.join(", ")}"
     end
   end
+  desc "On Loop's launch day, after the deploy that names it: give the Loop picks without a model Claude Opus 5.5, which the team runs it with"
+  task launch_loop: :environment do
+    loop_tool = Tool.find_by!(slug: "unannounced-agent")
+    abort "Deploy the catalog that names Loop first (it is still #{loop_tool.name.inspect})." unless loop_tool.name == "Loop"
+
+    loop_tool.entries.where(ai_model_id: nil).includes(:user, :category).find_each do |entry|
+      Toolbox::Update.call(user: entry.user, source: "web",
+        operations: [ { op: "set_pick", category: entry.category.slug, rank: entry.rank, model: "claude-opus-5-5", expected_tool: loop_tool.slug } ])
+      puts "#{entry.user.email_address}: Loop at ##{entry.rank} now runs Claude Opus 5.5"
+    end
+  end
 end
