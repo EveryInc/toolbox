@@ -11,9 +11,9 @@ class GetTeamRankingsTool < ApplicationTool
     and model. With `category` (a slug from list_categories) it returns that kind in detail: every
     tool and model with who ranked it 1st, 2nd and 3rd (`ranked_by`, only people who share with
     the member; `unlisted` is how many others counted have it), the setups (tool, model, context size and
-    effort) people share, and links to Vibe Check takes, which need a sign-in and which you
-    cannot read. `count` is { n, of }: n of the `of` people counted use it. Counts are people,
-    not scores. `audience` picks who is counted: `team` (every onboarded Every team member, the
+    effort) people share, and `takes`: links to Every's articles and Vibe Checks about the kind
+    (`tag` article or vibe_check; Vibe Checks need a sign-in), which you cannot read. `count`
+    is { n, of }: n of the `of` people counted use it. Counts are people, not scores. `audience` picks who is counted: `team` (every onboarded Every team member, the
     default; people with a private page count anonymously and are never named) or `others`
     (everyone else who shares with the member); `subscribers` is not available yet.
     `includes_your_private_picks` is true when the member's own picks are private: they count,
@@ -71,7 +71,7 @@ class GetTeamRankingsTool < ApplicationTool
         tools: detail[:tools].map { |listing| ranked_listing(listing) },
         models: detail[:models].map { |listing| ranked_listing(listing) },
         setups: detail[:setups].map { |setup| setup.merge(tool: item_prop(setup[:tool]), model: item_prop(setup[:model])) },
-        takes: detail[:takes].map { |take| { model: item_prop(take[:model]), vibe_check_url: take[:url] } },
+        takes: detail[:takes].map { |take| { tag: take[:tag], title: take[:title], item: item_prop(take[:item]), url: take[:url] } },
         last_update_at: detail[:last_update_at]
       }
     end

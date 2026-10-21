@@ -32,7 +32,10 @@ export const setups: Setup[] = [
   { tool: claudeMark, model: opusMark, context: null, effort: null, count: { n: 1, of: 6 } },
 ]
 
-export const takes: Take[] = [{ model: opusMark, url: 'https://checks.every.to/vibe-checks/claude-opus-5-5' }]
+export const takes: Take[] = [
+  { tag: 'article', title: 'How Every codes with agents', item: claudeCodeMark, url: 'https://every.to/p/how-every-codes?utm_source=toolbox&utm_medium=referral&utm_campaign=coding' },
+  { tag: 'vibe_check', title: 'Claude Opus 5.5', item: opusMark, url: 'https://checks.every.to/vibe-checks/claude-opus-5-5?utm_source=toolbox&utm_medium=referral&utm_campaign=coding' },
+]
 
 export const eras: Era[] = [
   { from: '2025-02-03', to: '2025-04-30', tool: cursorMark, model: gptMark },

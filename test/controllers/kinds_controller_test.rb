@@ -186,7 +186,7 @@ class KindsControllerTest < ActionDispatch::IntegrationTest
 
     get kind_path("coding")
 
-    assert_equal [ [ "claude-opus-5-5", "https://checks.every.to/vibe-checks/claude-opus-5-5" ] ], page_props[:takes].map { |take| [ take[:model][:slug], take[:url] ] }
+    assert_equal [ [ "vibe_check", "claude-opus-5-5", "https://checks.every.to/vibe-checks/claude-opus-5-5?utm_source=toolbox&utm_medium=referral&utm_campaign=coding" ] ], page_props[:takes].map { |take| [ take[:tag], take[:item][:slug], take[:url] ] }
   end
 
   test "a launched model nobody ranked in the kind gives no take, and a kind with none has an empty list" do
@@ -194,10 +194,10 @@ class KindsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as users(:every_dee)
 
     get kind_path("coding")
-    assert_equal %w[gpt-6-astra claude-opus-5-5], page_props[:takes].map { |take| take[:model][:slug] }, "newest launch first"
+    assert_equal %w[gpt-6-astra claude-opus-5-5], page_props[:takes].map { |take| take[:item][:slug] }, "newest launch first"
 
     get kind_path("knowledge-work")
-    assert_equal %w[claude-opus-5-5], page_props[:takes].map { |take| take[:model][:slug] }, "only Opus 5.5 is ranked in knowledge work"
+    assert_equal %w[claude-opus-5-5], page_props[:takes].map { |take| take[:item][:slug] }, "only Opus 5.5 is ranked in knowledge work"
 
     get kind_path("video")
     assert_empty page_props[:takes]
@@ -225,7 +225,7 @@ class KindsControllerTest < ActionDispatch::IntegrationTest
     assert_equal({ n: 3, of: 3 }, page_props[:ranked])
     assert_equal({ 1 => [ "Ana Every", "Cy Every" ], 2 => [ "Dee Every" ], 3 => [] }, names_by_rank(listing(page_props[:tools], "cursor")))
     assert_includes slugs(page_props[:models]), "claude-opus-5"
-    assert_includes page_props[:takes].map { |take| take[:model][:slug] }, "claude-opus-5"
+    assert_includes page_props[:takes].map { |take| take[:item][:slug] }, "claude-opus-5"
   end
 
   # The call to action follows the viewer

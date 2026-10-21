@@ -300,7 +300,7 @@ class SurfaceParityTest < ActionDispatch::IntegrationTest
       assert_equal listings(kind[:tools], :by_rank), listings(detail[:tools], :ranked_by), "tools of #{category.slug}, #{where}"
       assert_equal listings(kind[:models], :by_rank), listings(detail[:models], :ranked_by), "models of #{category.slug}, #{where}"
       assert_equal setups(kind[:setups]), setups(detail[:setups]), "setups of #{category.slug}, #{where}"
-      assert_equal kind[:takes].map { |take| [ take.dig(:model, :slug), take[:url] ] }, detail[:takes].map { |take| [ take.dig(:model, :slug), take[:vibe_check_url] ] }, "takes of #{category.slug}, #{where}"
+      assert_equal kind[:takes].map { |take| [ take[:tag], take[:title], take.dig(:item, :slug), take[:url] ] }, detail[:takes].map { |take| [ take[:tag], take[:title], take.dig(:item, :slug), take[:url] ] }, "takes of #{category.slug}, #{where}"
       assert_equal [ kind[:last_update_at] ], [ detail[:last_update_at] ], "last update of #{category.slug}, #{where}"
     end
 

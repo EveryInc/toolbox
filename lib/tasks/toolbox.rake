@@ -76,4 +76,15 @@ namespace :toolbox do
       puts "Added #{email}: #{tools.join(", ")}"
     end
   end
+  desc "On Claude Duet's launch day, after the deploy that names it: give the Duet picks without a model Claude Opus 5.5, which it is built around"
+  task launch_duet: :environment do
+    duet = Tool.find_by!(slug: "unannounced-agent")
+    abort "Deploy the catalog that names Claude Duet first (it is still #{duet.name.inspect})." unless duet.name == "Claude Duet"
+
+    duet.entries.where(ai_model_id: nil).includes(:user, :category).find_each do |entry|
+      Toolbox::Update.call(user: entry.user, source: "web",
+        operations: [ { op: "set_pick", category: entry.category.slug, rank: entry.rank, model: "claude-opus-5-5", expected_tool: duet.slug } ])
+      puts "#{entry.user.email_address}: Claude Duet at ##{entry.rank} now runs Claude Opus 5.5"
+    end
+  end
 end

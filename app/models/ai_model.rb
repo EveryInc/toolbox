@@ -2,9 +2,8 @@
 class AiModel < ApplicationRecord
   include CatalogItem
 
-  # Vibe Check links are set by an admin and rendered as outbound links, so they
-  # must be https on a host we control: VIBE_CHECK_HOSTS (comma separated) or these.
-  DEFAULT_VIBE_CHECK_HOSTS = %w[every.to checks.every.to].freeze
+  # Vibe Check links are set by an admin and rendered as outbound links (EveryLink).
+  DEFAULT_VIBE_CHECK_HOSTS = EveryLink::DEFAULT_HOSTS
 
   normalizes :vibe_check_url, with: ->(url) { url.strip.presence }
 
@@ -15,18 +14,9 @@ class AiModel < ApplicationRecord
   scope :launched, -> { approved.where.not(released_on: nil).where.not(vibe_check_url: nil) }
 
   class << self
-    def vibe_check_hosts
-      ENV["VIBE_CHECK_HOSTS"].to_s.split(",").map { |host| host.strip.downcase }.compact_blank.presence || DEFAULT_VIBE_CHECK_HOSTS
-    end
+    def vibe_check_hosts = EveryLink.hosts
 
-    # https, no credentials, the default port, and a host that is exactly an allowed one:
-    # no suffix or wildcard match, so "every.to.evil.com" and "evil-every.to" fail.
-    def vibe_check_url_allowed?(value)
-      uri = URI.parse(value.to_s)
-      uri.is_a?(URI::HTTPS) && uri.userinfo.nil? && uri.port == uri.default_port && vibe_check_hosts.include?(uri.host.to_s.downcase)
-    rescue URI::InvalidURIError
-      false
-    end
+    def vibe_check_url_allowed?(value) = EveryLink.allowed?(value)
   end
 
   # The link to render. Checked again here so a value written past validation
