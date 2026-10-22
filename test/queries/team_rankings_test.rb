@@ -261,7 +261,7 @@ class TeamRankingsTest < ActiveSupport::TestCase
     Tempfile.create([ "catalog", ".yml" ]) do |file|
       file.write({ "articles" => [
         { "title" => "How Every codes", "url" => "https://every.to/p/how-every-codes?ref=x&utm_source=old", "kinds" => %w[coding], "tool" => tools(:cursor).slug },
-        { "title" => "No tile", "url" => "https://every.to/p/no-tile", "kinds" => %w[coding research] },
+        { "title" => "No tile", "url" => "https://every.to/p/no-tile", "kinds" => %w[coding research], "tag" => "vibe_check" },
         { "title" => "Elsewhere", "url" => "https://every.to/p/video", "kinds" => %w[video] },
         { "title" => "Off Every", "url" => "https://evil.example/p", "kinds" => %w[coding] }
       ] }.to_yaml)
@@ -271,9 +271,9 @@ class TeamRankingsTest < ActiveSupport::TestCase
       takes = @team.kind(categories(:coding))[:takes]
       assert_equal [
         { tag: "article", title: "How Every codes", item: item(tools(:cursor)), url: "https://every.to/p/how-every-codes?ref=x&utm_source=toolbox&utm_medium=referral&utm_campaign=coding" },
-        { tag: "article", title: "No tile", item: nil, url: "https://every.to/p/no-tile?utm_source=toolbox&utm_medium=referral&utm_campaign=coding" }
+        { tag: "vibe_check", title: "No tile", item: nil, url: "https://every.to/p/no-tile?utm_source=toolbox&utm_medium=referral&utm_campaign=coding" }
       ], takes.first(2)
-      assert_equal %w[article article vibe_check], takes.pluck(:tag)
+      assert_equal %w[article vibe_check vibe_check], takes.pluck(:tag)
     ensure
       Article.path = nil
     end

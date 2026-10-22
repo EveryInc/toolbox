@@ -10,6 +10,7 @@ class ArticleTest < ActiveSupport::TestCase
     Article.all.each do |article|
       assert article.title.present?, "an article needs a title"
       assert article.link, "#{article.title}: #{article.url} is not an https link on #{EveryLink.hosts.to_sentence}"
+      assert_includes Article::TAGS, article.tag, "#{article.title}: tag is article or vibe_check"
       assert article.kinds.any?, "#{article.title} is on no kind"
       assert_empty article.kinds - kinds, "#{article.title} names an unknown kind"
       assert_includes tools, article.tool, "#{article.title} names an unknown tool" if article.tool
