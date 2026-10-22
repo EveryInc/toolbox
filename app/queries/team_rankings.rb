@@ -241,7 +241,7 @@ class TeamRankings
     ranked_ids = model_tallies.map { |tally| tally.item.id }
     launches = ModelLaunches.models.select { |model| ranked_ids.include?(model.id) }
 
-    articles.map { |article| take("article", article.title, tools[article.tool], article.link, category) } +
+    articles.map { |article| take(article.tag, article.title, tools[article.tool], article.link, category) } +
       launches.map { |model| take("vibe_check", model.name, model, model.vibe_check_link, category) }
   end
 

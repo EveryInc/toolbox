@@ -212,6 +212,8 @@ models:
 
 # Every articles linked from the kinds of work they are about (Article), shown in the
 # kind's "Read on Every" list beside the Vibe Checks and tagged for Toolbox with UTM.
-# url: an https link on every.to; kinds: category slugs; tool (optional): a tool slug
-# for the row's tile. Read from this file on each page view, not synced to the database.
-articles: []
+# url: an https link on every.to, without UTM (Toolbox adds its own); kinds: category slugs;
+# tool (optional): a tool slug for the row's tile; tag: article (the default) or vibe_check.
+# Read from this file on each page view, not synced to the database.
+articles:
+  - { title: "Duet: Anthropic's always-on agent", url: "https://every.to/vibe-check/vibe-check-duet-anthropic-s-always-on-agent", kinds: [personal-agents], tool: unannounced-agent, tag: vibe_check }
