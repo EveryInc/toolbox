@@ -41,7 +41,7 @@ gem "ruby-vips", "~> 2.2"
 gem "inertia_rails"
 
 # First-class LLM access (OpenAI / Anthropic / Gemini) with a unified API.
-gem "ruby_llm", "~> 2.0"
+gem "ruby_llm", "~> 2.1"
 
 # Durable, resumable workflows backed by Active Record
 gem "geneva_drive", "~> 0.6.0"
