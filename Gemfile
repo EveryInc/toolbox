@@ -55,7 +55,7 @@ gem "vite_rails"
 
 # Sign in with Every (lib/omniauth/strategies/every.rb)
 gem "omniauth", "~> 2.1"
-gem "omniauth-oauth2", "~> 1.8"
+gem "omniauth-oauth2", "~> 1.10"
 
 # Feature flags: per-user staged rollout without a deploy (docs/modules/feature_flags.md)
 gem "flipper", "~> 1.3"
